@@ -1,0 +1,6 @@
+
+Usage: script [OPTION]... [-T] FileName (filename is mandotary)
+After Commands: undo and end 
+undo : undo the last command entered
+end  : to end writing in script file
+Operations : it will create a script file and when user enter  command it will             be saved in the file in shell script format.

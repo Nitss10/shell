@@ -6,8 +6,12 @@
 #include <sys/wait.h>
 #include <ctype.h>
 #include <stdbool.h>
-
-
+#include "tree.h"
+#include "dict.h"
+#include "matrix.h"
+#include "maxutil.h"
+#include "interest.h"
+#include <math.h>
 void spaceRemover(char* buf)
 {
 	if(buf[strlen(buf)-1]==' ' || buf[strlen(buf)-1]=='\n')
@@ -51,28 +55,82 @@ void parser(char** param,int *nr,char *buf,const char *c)
          }
          fprintf(fp1,"\n");
 }*/
-void try(char* buff,int nr,char* fname){
+//------------script file creation !!----------------
+void scriptFile(char* buff,int nr,char* fname){			
      FILE *fp1;
          fp1 = fopen(fname, "a+");
          fprintf(fp1, "%s",buff);
          fclose(fp1);
 
 }
+void undoPreCommand(char* fname){
+	FILE *fp,*fp1,*fp2;
+   char str[100],sub[100];
+   char temp[] = "tempio.sh";
+   fp1 = fopen(fname,"r");
+   fp2 = fopen(temp,"w");    
+   int c=0,ctr=0;
+
+    while (!feof(fp1)) 
+        {
+            fgets(str, 100, fp1);  
+            c++;            
+            }
+    fp = fopen(fname,"r");
+     while (!feof(fp)) 
+        {
+             strcpy(str, "\0");
+            fgets(str, 100, fp);
+            if (!feof(fp)) 
+            {
+                ctr++;
+                if (ctr != c-1) 
+                {
+                    fprintf(fp2, "%s", str);
+                }
+            }          
+            }
+   	fclose(fp);
+   	fclose(fp2);
+	remove(fname);  		
+    rename(temp, fname);
+}
+void print(char* fname){
+	FILE *fp;
+	fp = fopen(fname,"r");
+	char c;
+	c = fgetc(fp); 
+	
+    while (c != EOF) 
+    { 
+        printf ("%c", c); 
+        c = fgetc(fp); 
+    } 
+	printf("\n");
+  
+    fclose(fp); 
+}
+//------simple command execution  
 void executeBasic(char** argv,int nr,bool flag ,char* fname,char *buff)
 {	int result;
     //char source[] = "test.sh";
     if(fork()==0)
-		result = execvp(argv[0],argv); 
+	{result = execvp(argv[0],argv);
+		printf("%s",argv[0]);
+		printf("%s\n",":  Command Not Found");
+		exit(0);
+	}
 	else
 		wait(NULL);
     if(result!=-1 && flag){
         //shellScript(argv,nr,fname);
-        try(buff,nr,fname);
+        scriptFile(buff,nr,fname);
     }
 
 
-}
 
+}
+//-----------piped command execution
 void executePiped(char** buf,int nr,char* buff,char* fname,bool flag)
 {
 	if(nr>10)
@@ -113,9 +171,9 @@ void executePiped(char** buf,int nr,char* buff,char* fname,bool flag)
 		wait(NULL);
 	}
 	if(result == 1 && flag)
-    	try(buff,nr,fname);
+    	scriptFile(buff,nr,fname);
 }
-
+//---------- command with >,>>,< operator ----------
 void executeRedirect(char** buf,int nr,int mode,char*buff,char* fname,bool flag)
 {
 	int pc,fd;
@@ -166,15 +224,10 @@ void executeRedirect(char** buf,int nr,int mode,char*buff,char* fname,bool flag)
     
 		result = execvp(argv[0],argv);
         if(result!=-1 && flag)
-            try(buff,nr,fname);
+            scriptFile(buff,nr,fname);
 	}
 }
-void add(char** params1){
-	int i = atoi(params1[1]);
-	int j = atoi(params1[2]); 
-	i = i+j;
-	printf("%d",i);
-}
+//---------intial window display --------
 void prompt(){
 	static int start=1;
 	if(start){
@@ -187,8 +240,8 @@ void prompt(){
 	char *curr_user = getenv("USER"); 
 	printf("[%s@localhost %s]$ ", curr_user, (curr_dir+12)); // print after 12 char 
 }
-
-int main()
+//--------main function ------
+int main(int tdi, char *tdir[])
 {	bool flag;
 	flag = false;
 	char buf[500],*buffer[100], *params1[100],command[500];
@@ -228,38 +281,69 @@ int main()
 			parser(params1,&nr,buf," ");   //nr = 3
 			if(strstr(params1[0],"cd"))
 				chdir(params1[1]);
-			if(strstr(params1[0],"number"))
-			
-			{	
-				add(params1);
-			}
 			else if (strstr(params1[0],"script"))
-			{ flag = true;
+			{   if(!params1[1])
+				{	printf("%s\n","script: missing file name");
+					printf("%s\n","try script --help");
+				}
+				else if(strstr(params1[1],"--help")){
+						print("scripthelp.txt");
+						
+				}
+				else{
+				flag = true;
                 strcpy(fname,params1[1]);
-                try("#!/bin/bash",nr,fname);
+				if(strstr(fname,".sh"))
+                	scriptFile("#!/bin/bash \n",nr,fname);
 				//strcpy(params1[0],"touch");
 				//executeBasic(params1,nr,flag);
-
-			}
-			else if(strstr(params1[0],"end"))
-			{ 	
-				flag = false;
-
-			}
-            else if(strstr(params1[0],"maxcpu"))
-			    {
-				  char command[100]="ps ahux --sort=-c | awk NR<=5{printf\"%s%6d%s\\n\",$3,$2,$11}";
-				 // {printf\"%s %6d %s\n\",$3,$2,$11}'";
-				  nr=0;
-				  parser(buffer,&nr,command,"|");
-				  printf("%d\n",nr);
-
-					for(int i = 0; i < nr; i++)
-					{
-						printf("String = %5s \n", buffer[i]);
-				    }
-				executePiped(buffer,nr,buf,fname,flag);
 				}
+			}
+			else if(strstr(params1[0],"end"))	
+					flag = false;
+			else if(strstr(params1[0],"undo"))
+					undoPreCommand(fname);
+			
+            else if (strstr(params1[0], "maxutil"))
+			{
+				char line[130];
+				if (nr != 2)
+				{
+					printf("%s", "Command not found");
+				}
+
+				else
+				{
+					char command[100];
+					maxutil(params1, command);
+					nr = 0;
+					parser(buffer, &nr, command, "|");
+					executePiped(buffer, nr, buf, fname, flag);					
+					printf("KILL PID: ");
+					fgets(line, sizeof line, stdin);
+					int i = atoi(line);
+					kill(i, SIGKILL);
+				}
+			}
+			else if (strstr(params1[0], "matrix"))
+			{
+				if (nr <= 6)
+				{
+					printf("%s", "Command not found");
+				}
+				else
+				{
+					matrix(params1, nr);
+				}
+			}
+			else if(strstr(params1[0],"tree"))
+					tree(tdi,tdir);
+			else if(strstr(params1[0],"dictionary"))
+					dict(params1[1]);
+			else if(strstr(params1[0],"ci"))
+			{
+			interest(params1);
+			}
 			else if(strstr(params1[0],"exit"))
 				exit(0);
 			else 
