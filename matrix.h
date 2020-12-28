@@ -16,7 +16,6 @@ void matrix(char **param, int nr)
 	acol = atoi(param[x++]);
 	brow = atoi(param[x++]);
 	bcol = atoi(param[x++]);
-	printf("%d", nr);
 	if (arow * acol + brow * bcol + 6 != nr)
 	{
 		printf("%s", "Wrong number of arguments\n");
