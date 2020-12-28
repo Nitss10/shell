@@ -340,9 +340,9 @@ int main(int tdi, char *tdir[])
 					tree(tdi,tdir);
 			else if(strstr(params1[0],"dictionary"))
 					dict(params1[1]);
-			else if(strstr(params1[0],"ci"))
+			else if(strstr(params1[0],"interest"))
 			{
-			interest(params1);
+			interest(params1[1]);
 			}
 			else if(strstr(params1[0],"exit"))
 				exit(0);

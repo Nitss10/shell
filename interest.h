@@ -1,9 +1,10 @@
 #include<math.h>
-void interest(char **params1)
-{ 
+void interest(char *params1)
+{ 	int i = fork();
+	if(i==0){
     char action[10];
     double principle, rate, time,n;
-    strcpy(action,params1[1]);
+    strcpy(action,params1);
     if(strstr(action,"-s"))
     {
         printf("Enter principle amount");
@@ -38,8 +39,12 @@ void interest(char **params1)
 			rate=rate/100;
 			double power= time*n;
 			double ci=principle*(pow((1+rate/n),power));
-            printf("%.2lf", ci);
+            printf("%.2lf", ci); 
+} exit(0);
 
-    
-}
+	}
+	else
+	{
+		wait(0);
+	}
 }
