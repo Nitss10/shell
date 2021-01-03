@@ -8,196 +8,243 @@
 #include <stdbool.h>
 void matrix(char **param, int nr)
 {
-	int i, j, k, x, arow, brow, acol, bcol;
-	char *action;
-	x = 1;
-	action = param[x++];
-	arow = atoi(param[x++]);
-	acol = atoi(param[x++]);
-	brow = atoi(param[x++]);
-	bcol = atoi(param[x++]);
-	if (arow * acol + brow * bcol + 6 != nr)
+	if (fork() == 0)
 	{
-		printf("%s", "Wrong number of arguments\n");
-		return;
-	}
-	int a[arow][acol], b[brow][bcol], ans[arow][bcol];
-	if (strstr(action, "-m"))
-	{
-		if (acol == brow)
+		int i, j, k, x, arow, brow, acol, bcol;
+		char *action;
+		if (nr < 2)
 		{
-			for (i = 0; i < arow; i++)
-			{
-				for (j = 0; j < acol; j++)
-				{
-					a[i][j] = atoi(param[x++]);
-				}
-			}
+			printf("Command not found\n");
+			return;
+		}
+		action = param[1];
+		if (strstr(action, "-m") || strstr(action, "-a") || strstr(action, "-d") || strstr(action, "-s"))
+		{
+			printf("Enter the dimensions of first matrix: ");
+			scanf("%d %d", &arow, &acol);
+			printf("Enter the dimensions of second matrix: ");
+			scanf("%d %d", &brow, &bcol);
 
-			for (i = 0; i < brow; i++)
+			int a[arow][acol], b[brow][bcol], ans[arow][bcol];
+			if (strstr(action, "-m"))
 			{
-				for (j = 0; j < bcol; j++)
-				{
-					b[i][j] = atoi(param[x++]);
-				}
-			}
 
-			for (i = 0; i < arow; i++)
-			{
-				for (j = 0; j < bcol; j++)
+				if (acol == brow)
 				{
-					ans[i][j] = 0;
-					for (k = 0; k < acol; k++)
+					printf("Enter the elements of first matrix:\n");
+					for (i = 0; i < arow; i++)
 					{
-						ans[i][j] += a[i][k] * b[k][j];
+						for (j = 0; j < acol; j++)
+						{
+							scanf("%d", &a[i][j]);
+						}
+					}
+					printf("Enter the elements of second matrix:\n");
+					for (i = 0; i < brow; i++)
+					{
+						for (j = 0; j < bcol; j++)
+						{
+							scanf("%d", &b[i][j]);
+						}
+					}
+
+					for (i = 0; i < arow; i++)
+					{
+						for (j = 0; j < bcol; j++)
+						{
+							ans[i][j] = 0;
+							for (k = 0; k < acol; k++)
+							{
+								ans[i][j] += a[i][k] * b[k][j];
+							}
+						}
+					}
+					printf("\nProduct of two matrices: \n");
+					for (i = 0; i < arow; i++)
+					{
+						for (j = 0; j < bcol; j++)
+						{
+							if (j == 0)
+							{
+								printf("|%4d", ans[i][j]);
+							}
+							else if (j == bcol - 1)
+							{
+								printf("%4d %2s", ans[i][j], "|");
+							}
+							else
+								printf("%4d", ans[i][j]);
+						}
+						printf("\n");
 					}
 				}
-			}
-			printf("\nProduct of two matrices: \n");
-			for (i = 0; i < arow; i++)
-			{
-				for (j = 0; j < bcol; j++)
+				else
 				{
-					printf("%d\t", ans[i][j]);
+					printf("%s", "These matrices cannot be multiplied\n");
 				}
-				printf("\n");
+			}
+			else if (strstr(action, "-a"))
+			{
+				if (acol == bcol && arow == brow)
+				{
+					printf("Enter the elements of first matrix:\n");
+					for (i = 0; i < arow; i++)
+					{
+						for (j = 0; j < acol; j++)
+						{
+							scanf("%d", &a[i][j]);
+						}
+					}
+					printf("Enter the elements of second matrix:\n");
+					for (i = 0; i < brow; i++)
+					{
+						for (j = 0; j < bcol; j++)
+						{
+							scanf("%d", &b[i][j]);
+						}
+					}
+
+					for (i = 0; i < arow; ++i)
+						for (j = 0; j < acol; ++j)
+						{
+							ans[i][j] = a[i][j] + b[i][j];
+						}
+
+					printf("\nSum of two matrices: \n");
+					for (i = 0; i < arow; i++)
+					{
+						for (j = 0; j < bcol; j++)
+						{
+							if (j == 0)
+							{
+								printf("|%4d", ans[i][j]);
+							}
+							else if (j == bcol - 1)
+							{
+								printf("%4d %2s", ans[i][j], "|");
+							}
+							else
+								printf("%4d", ans[i][j]);
+						}
+						printf("\n");
+					}
+				}
+				else
+				{
+					printf("%s", "These matrices cannot be added\n");
+				}
+			}
+			else if (strstr(action, "-s"))
+			{
+
+				if (acol == bcol && arow == brow)
+				{
+					printf("Enter the elements of first matrix:\n");
+					for (i = 0; i < arow; i++)
+					{
+						for (j = 0; j < acol; j++)
+						{
+							scanf("%d", &a[i][j]);
+						}
+					}
+					printf("Enter the elements of second matrix:\n");
+					for (i = 0; i < brow; i++)
+					{
+						for (j = 0; j < bcol; j++)
+						{
+							scanf("%d", &b[i][j]);
+						}
+					}
+					for (i = 0; i < arow; ++i)
+						for (j = 0; j < acol; ++j)
+						{
+							ans[i][j] = a[i][j] - b[i][j];
+						}
+
+					printf("\nDifference of two matrices: \n");
+					for (i = 0; i < arow; i++)
+					{
+						for (j = 0; j < bcol; j++)
+						{
+							if (j == 0)
+							{
+								printf("|%4d", ans[i][j]);
+							}
+							else if (j == bcol - 1)
+							{
+								printf("%4d %2s", ans[i][j], "|");
+							}
+							else
+								printf("%4d", ans[i][j]);
+						}
+						printf("\n");
+					}
+				}
+				else
+				{
+					printf("%s", "These matrices cannot be substracted\n");
+				}
+			}
+			else if (strstr(action, "-d"))
+			{
+
+				if (acol == bcol && arow == brow)
+				{
+					printf("Enter the elements of first matrix:\n");
+					for (i = 0; i < arow; i++)
+					{
+						for (j = 0; j < acol; j++)
+						{
+							scanf("%d", &a[i][j]);
+						}
+					}
+					printf("Enter the elements of second matrix:\n");
+					for (i = 0; i < brow; i++)
+					{
+						for (j = 0; j < bcol; j++)
+						{
+							scanf("%d", &b[i][j]);
+						}
+					}
+					for (i = 0; i < arow; ++i)
+						for (j = 0; j < acol; ++j)
+						{
+							ans[i][j] = a[i][j] / b[i][j];
+						}
+
+					printf("\nDivision of two matrices: \n");
+					for (i = 0; i < arow; i++)
+					{
+						for (j = 0; j < bcol; j++)
+						{
+							if (j == 0)
+							{
+								printf("|%4d", ans[i][j]);
+							}
+							else if (j == bcol - 1)
+							{
+								printf("%4d %2s", ans[i][j], "|");
+							}
+							else
+								printf("%4d", ans[i][j]);
+						}
+						printf("\n");
+					}
+				}
+				else
+				{
+					printf("%s", "These matrices cannot be divided\n");
+				}
 			}
 		}
 		else
 		{
-			printf("%s", "These matrices cannot be multiplied\n");
+			printf("Command not found\n");
 		}
-	}
-	else if (strstr(action, "-a"))
-	{
-
-		if (acol == bcol && arow == brow)
-		{
-			for (i = 0; i < arow; i++)
-			{
-				for (j = 0; j < acol; j++)
-				{
-					a[i][j] = atoi(param[x++]);
-				}
-			}
-
-			for (i = 0; i < brow; i++)
-			{
-				for (j = 0; j < bcol; j++)
-				{
-					b[i][j] = atoi(param[x++]);
-				}
-			}
-
-			for (i = 0; i < arow; ++i)
-				for (j = 0; j < acol; ++j)
-				{
-					ans[i][j] = a[i][j] + b[i][j];
-				}
-
-			printf("\nSum of two matrices: \n");
-			for (i = 0; i < arow; ++i)
-				for (j = 0; j < acol; ++j)
-				{
-					printf("%d   ", ans[i][j]);
-					if (j == acol - 1)
-					{
-						printf("\n\n");
-					}
-				}
-		}
-		else
-		{
-			printf("%s", "These matrices cannot be added\n");
-		}
-	}
-	else if (strstr(action, "-s"))
-	{
-
-		if (acol == bcol && arow == brow)
-		{
-			for (i = 0; i < arow; i++)
-			{
-				for (j = 0; j < acol; j++)
-				{
-					a[i][j] = atoi(param[x++]);
-				}
-			}
-
-			for (i = 0; i < brow; i++)
-			{
-				for (j = 0; j < bcol; j++)
-				{
-					b[i][j] = atoi(param[x++]);
-				}
-			}
-			for (i = 0; i < arow; ++i)
-				for (j = 0; j < acol; ++j)
-				{
-					ans[i][j] = a[i][j] - b[i][j];
-				}
-
-			printf("\nDifference of two matrices: \n");
-			for (i = 0; i < arow; ++i)
-				for (j = 0; j < acol; ++j)
-				{
-					printf("%d   ", ans[i][j]);
-					if (j == acol - 1)
-					{
-						printf("\n\n");
-					}
-				}
-		}
-		else
-		{
-			printf("%s", "These matrices cannot be substracted\n");
-		}
-	}
-	else if (strstr(action, "-d"))
-	{
-
-		if (acol == bcol && arow == brow)
-		{
-			for (i = 0; i < arow; i++)
-			{
-				for (j = 0; j < acol; j++)
-				{
-					a[i][j] = atoi(param[x++]);
-				}
-			}
-
-			for (i = 0; i < brow; i++)
-			{
-				for (j = 0; j < bcol; j++)
-				{
-					b[i][j] = atoi(param[x++]);
-				}
-			}
-			for (i = 0; i < arow; ++i)
-				for (j = 0; j < acol; ++j)
-				{
-					ans[i][j] = a[i][j] / b[i][j];
-				}
-
-			printf("\nDivision of two matrices: \n");
-			for (i = 0; i < arow; ++i)
-				for (j = 0; j < acol; ++j)
-				{
-					printf("%d   ", ans[i][j]);
-					if (j == acol - 1)
-					{
-						printf("\n\n");
-					}
-				}
-		}
-		else
-		{
-			printf("%s", "These matrices cannot be divided\n");
-		}
+		exit(0);
 	}
 	else
 	{
-		printf("%s", "Command not found\n");
+		wait(0);
 	}
-	return;
 }

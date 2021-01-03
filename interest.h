@@ -1,13 +1,15 @@
-#include<math.h>
+#include <math.h>
 void interest(char *params1)
-{ 	int i = fork();
-	if(i==0){
-    char action[10];
-    double principle, rate, time,n;
-    strcpy(action,params1);
-    if(strstr(action,"-s"))
-    {
-        printf("Enter principle amount  ");
+{
+	int i = fork();
+	if (i == 0)
+	{
+		char action[10];
+		double principle, rate, time, n;
+		strcpy(action, params1);
+		if (strstr(action, "-s"))
+		{
+			printf("Enter principle amount  ");
 			scanf("%lf", &principle);
 
 			printf("Enter time in years  ");
@@ -15,15 +17,14 @@ void interest(char *params1)
 
 			printf("Enter rate annually  ");
 			scanf("%lf", &rate);
-            rate=rate/100;
+			rate = rate / 100;
 
-            double si=principle*rate*time;
-            printf("%.2lf\n", si);
+			double si = principle * rate * time;
+			printf("%.2lf\n", si);
+		}
+		else if (strstr(action, "-c"))
+		{
 
-    }
-    else if(strstr(action, "-c"))
-    {
-        
 			printf("Enter principle amount  ");
 			scanf("%lf", &principle);
 
@@ -36,12 +37,12 @@ void interest(char *params1)
 			printf("Enter number of times applied per year  ");
 			scanf("%lf", &n);
 
-			rate=rate/100;
-			double power= time*n;
-			double ci=principle*(pow((1+rate/n),power));
-            printf("%.2lf\n", ci); 
-} exit(0);
-
+			rate = rate / 100;
+			double power = time * n;
+			double ci = principle * (pow((1 + rate / n), power));
+			printf("%.2lf\n", ci);
+		}
+		exit(0);
 	}
 	else
 	{

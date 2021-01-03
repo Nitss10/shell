@@ -348,21 +348,15 @@ int main(int tdi, char *tdir[])
 						}
 						exit(0);
 					}
-					else{
+					else
+					{
 						wait(0);
 					}
 				}
 			}
 			else if (strstr(params1[0], "matrix"))
 			{
-				if (nr <= 6)
-				{
-					printf("%s", "Command not found");
-				}
-				else
-				{
-					matrix(params1, nr);
-				}
+				matrix(params1, nr);
 			}
 			else if (strstr(params1[0], "tree"))
 				tree(tdi, tdir);
