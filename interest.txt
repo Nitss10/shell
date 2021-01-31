@@ -1,0 +1,5 @@
+
+Usage: interest [OPTION]... [-s] -s,-c argument are necessary 
+-s: select -s to get the simple interest 
+-c: select -c to get the compound interest 
+Operations : It will give the resulting simple interest and compound interest.

@@ -324,7 +324,11 @@ int main(int tdi, char *tdir[])
 				char response;
 				if (nr != 2)
 				{
-					printf("%s", "Command not found");
+					printf("%s", "Need argument -m ,-c \n");
+					printf("%s\n", "try maxutil --help");
+				}
+				else if(strstr(params1[1],"--help")) {
+					print("maxutil.txt");
 				}
 
 				else
@@ -356,15 +360,39 @@ int main(int tdi, char *tdir[])
 			}
 			else if (strstr(params1[0], "matrix"))
 			{
+				if (!params1[1])
+				{
+					printf("%s\n", "matrix: missing argument -a,-s,-m,");
+					printf("%s\n", "try matrix --help");
+				}
+
+				else if(strstr(params1[1],"--help"))
+					print("matrix.txt");
+				else 
 				matrix(params1, nr);
 			}
 			else if (strstr(params1[0], "tree"))
 				tree(tdi, tdir);
 			else if (strstr(params1[0], "dictionary"))
+			{	if (!params1[1])
+				{
+					printf("%s\n", "dictionary: missing argument word");
+					printf("%s\n", "enter dictionary - word");
+				}
+				else
 				dict(params1[1]);
+			}
 			else if (strstr(params1[0], "interest"))
-			{
-				interest(params1[1]);
+			{	if (!params1[1])
+				{
+					printf("%s\n", "interest: missing argument -s ,-m");
+					printf("%s\n", "try script --help");
+				}
+
+				else if(strstr(params1[1],"--help"))
+					print("interest.txt");
+				else 
+					interest(params1[1]);
 			}
 			else if (strstr(params1[0], "exit"))
 				exit(0);

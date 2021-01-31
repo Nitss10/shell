@@ -1,0 +1,9 @@
+Usage: matrix [OPTION]... [-x] -a,-m,-s,-d argument are necessary 
+-m: select -m to multiply two matrices
+-a: select -a to add two matrices and dimension should be same 
+-s: select -s to subtract two matrices
+-d: select -d to divide two matrices
+
+After Commands:
+Answer the subsequent queries asked.
+Operations : It will give the resultant matrix as output

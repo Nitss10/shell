@@ -1,0 +1,8 @@
+
+Usage: maxutil [OPTION]... [-m] -m,-c argument are necessary 
+-m: select -m to get top process with max memory utilization.
+-c: select -c to gettop process with max cpu utilization. 
+After Commands: y/n
+y: select y to kill process
+n: select n to kill process 
+Operations : It will give top process with max cpu or memory utilization
